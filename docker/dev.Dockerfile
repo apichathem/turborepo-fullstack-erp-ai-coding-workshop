@@ -7,6 +7,13 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends openssl ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
+# Corporate network (Forcepoint) does TLS inspection: trust its CA so npm/pnpm/node
+# can verify TLS to registries. The .crt lives next to this Dockerfile (build context root).
+COPY docker/forcepoint-ca.crt /usr/local/share/ca-certificates/forcepoint-ca.crt
+RUN update-ca-certificates
+ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt
+RUN npm config set cafile /etc/ssl/certs/ca-certificates.crt
+
 # Keep in sync with "packageManager" in the root package.json.
 RUN npm install -g pnpm@12.15.0
 
