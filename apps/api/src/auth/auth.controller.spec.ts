@@ -10,7 +10,20 @@ import { AuthController } from './auth.controller.js';
 import { SESSION_COOKIE, verifySessionToken } from './session-token.js';
 
 const secret = 'test-secret-that-is-at-least-32-characters';
-const admin: User = { id: 'u1', email: 'admin@erp.local', name: 'Admin User', role: 'ADMIN' };
+const admin: User = {
+  id: 'u1',
+  email: 'admin@erp.local',
+  name: 'Admin User',
+  role: 'ADMINISTRATOR',
+  storeId: null,
+};
+const storeStaff: User = {
+  id: 'u2',
+  email: 'staff_b01@erp.local',
+  name: 'Staff B01',
+  role: 'STORE_EMPLOYEE',
+  storeId: 'B01',
+};
 
 async function createController(findUnique = vi.fn()) {
   const moduleRef = await Test.createTestingModule({
@@ -89,5 +102,13 @@ describe('AuthController', () => {
 
     await expect(call(controller.me(admin), undefined)).resolves.toEqual({ user: admin });
     await expect(call(controller.me(undefined), undefined)).resolves.toEqual({ user: null });
+  });
+
+  it('carries the role and store of a store-bound user through the handler (S1)', async () => {
+    const controller = await createController();
+
+    await expect(call(controller.me(storeStaff), undefined)).resolves.toEqual({
+      user: { ...storeStaff, role: 'STORE_EMPLOYEE', storeId: 'B01' },
+    });
   });
 });
