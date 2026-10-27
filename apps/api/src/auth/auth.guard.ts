@@ -19,7 +19,13 @@ import {
 } from './auth.decorators.js';
 import { readCookie, SESSION_COOKIE, verifySessionToken } from './session-token.js';
 
-export const USER_SELECT = { id: true, email: true, name: true, role: true, storeId: true } as const;
+export const USER_SELECT = {
+  id: true,
+  email: true,
+  name: true,
+  role: true,
+  storeId: true,
+} as const;
 
 /**
  * Registered globally in AuthModule. Loads the user from the session cookie into `request.user`,

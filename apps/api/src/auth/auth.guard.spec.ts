@@ -142,9 +142,9 @@ describe('AuthGuard', () => {
     it('rejects a store-scoped request with no session before reading the target store', async () => {
       const { run } = setup(b01Staff);
 
-      await expect(
-        run('storeScoped', undefined, { storeId: 'B01' }).result,
-      ).rejects.toBeInstanceOf(UnauthorizedException);
+      await expect(run('storeScoped', undefined, { storeId: 'B01' }).result).rejects.toBeInstanceOf(
+        UnauthorizedException,
+      );
     });
   });
 });
