@@ -139,6 +139,15 @@ describe('AuthGuard', () => {
       ).resolves.toBe(true);
     });
 
+    it('denies a store-bound user with no store rather than treating them as org-wide', async () => {
+      const storelessStaff: User = { ...staff, role: 'STORE_EMPLOYEE', storeId: null };
+      const { run } = setup(storelessStaff);
+
+      await expect(
+        run('storeScoped', sessionCookie('u1'), { storeId: 'B01' }).result,
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
     it('rejects a store-scoped request with no session before reading the target store', async () => {
       const { run } = setup(b01Staff);
 

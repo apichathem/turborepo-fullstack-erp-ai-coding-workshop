@@ -9,6 +9,17 @@ export const RoleSchema = z.enum([
 ]);
 export type Role = z.infer<typeof RoleSchema>;
 
+/**
+ * Roles bound to a single store: they may only act on their own `storeId`. Org-wide roles
+ * (Administrator, Manager) are not store-scoped. This is the source of truth for the store-scope
+ * check so authorization never relies on `storeId` being null to decide "org-wide".
+ */
+export const STORE_BOUND_ROLES = ['PURCHASING_OFFICER', 'STORE_EMPLOYEE'] as const satisfies Role[];
+
+/** Whether a role is confined to one store (Purchasing officer, Store employee). */
+export const isStoreBoundRole = (role: Role): boolean =>
+  (STORE_BOUND_ROLES as readonly Role[]).includes(role);
+
 /** The signed-in user as the API exposes it (never includes the password hash). */
 export const UserSchema = z.object({
   id: z.string(),

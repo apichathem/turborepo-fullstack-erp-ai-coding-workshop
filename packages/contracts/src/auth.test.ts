@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { LoginInputSchema, RoleSchema, SessionSchema, UserSchema } from './auth.js';
+import {
+  isStoreBoundRole,
+  LoginInputSchema,
+  RoleSchema,
+  SessionSchema,
+  STORE_BOUND_ROLES,
+  UserSchema,
+} from './auth.js';
 
 describe('RoleSchema', () => {
   it('accepts the four TOR roles', () => {
@@ -15,6 +22,19 @@ describe('RoleSchema', () => {
 
   it('rejects an unknown role', () => {
     expect(RoleSchema.safeParse('OWNER').success).toBe(false);
+  });
+});
+
+describe('isStoreBoundRole', () => {
+  it('treats store-bound roles as confined to one store', () => {
+    expect(STORE_BOUND_ROLES).toEqual(['PURCHASING_OFFICER', 'STORE_EMPLOYEE']);
+    expect(isStoreBoundRole('PURCHASING_OFFICER')).toBe(true);
+    expect(isStoreBoundRole('STORE_EMPLOYEE')).toBe(true);
+  });
+
+  it('treats org-wide roles as not store-scoped', () => {
+    expect(isStoreBoundRole('ADMINISTRATOR')).toBe(false);
+    expect(isStoreBoundRole('MANAGER')).toBe(false);
   });
 });
 

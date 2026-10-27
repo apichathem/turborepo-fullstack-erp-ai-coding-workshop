@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
-import type { Role } from '@erp/contracts';
+import { isStoreBoundRole, type Role } from '@erp/contracts';
 import type { Env } from '../config/env.js';
 import { PrismaService } from '../database/prisma.service.js';
 import {
@@ -62,8 +62,10 @@ export class AuthGuard implements CanActivate {
       STORE_SCOPED_KEY,
       targets,
     );
-    if (extractStore && request.user.storeId !== null) {
-      // Store-bound users may only act on their own store; org-wide users (storeId null) pass.
+    if (extractStore && isStoreBoundRole(request.user.role)) {
+      // Store-bound roles may only act on their own store; org-wide roles (Administrator, Manager)
+      // pass. The role decides scope, not a null storeId, so a store-bound user with no store is
+      // denied (fail closed) rather than silently treated as org-wide.
       if (extractStore(request) !== request.user.storeId) throw new ForbiddenException();
     }
 
