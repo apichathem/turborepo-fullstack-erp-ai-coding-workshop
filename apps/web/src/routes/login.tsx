@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Navigate, useSearchParams } from 'react-router';
+import { ApiErrorMessage } from '@/components/api-error-message';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -72,12 +73,12 @@ export function LoginPage() {
                 onChange={(event) => setPassword(event.target.value)}
               />
             </div>
-            {login.error && (
+            {isUnauthorized(login.error) ? (
               <p role="alert" className="text-sm text-destructive">
-                {isUnauthorized(login.error)
-                  ? 'Invalid email or password.'
-                  : 'Could not sign in. Is the API running?'}
+                Invalid email or password.
               </p>
+            ) : (
+              <ApiErrorMessage error={login.error} />
             )}
             <Button type="submit" className="w-full" disabled={login.isPending}>
               {login.isPending ? 'Signing in…' : 'Sign in'}
