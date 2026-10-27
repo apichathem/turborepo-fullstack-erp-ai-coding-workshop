@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createQueryClient } from '@/lib/query-client';
-import { mockApi, unauthorized } from '@/test/mock-api';
+import { apiError, mockApi, unauthorized } from '@/test/mock-api';
 import { LoginPage } from './login';
 
 const admin = { id: '1', email: 'admin@erp.local', name: 'Admin User', role: 'ADMIN' };
@@ -56,6 +56,34 @@ describe('LoginPage', () => {
     await signIn('admin@erp.local', 'wrong');
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Invalid email or password.');
+  });
+
+  it('tells the user in Thai to correct their input when validation fails', async () => {
+    mockApi({
+      'GET /auth/me': { user: null },
+      'POST /auth/login': apiError('CORRECT_INPUT', 'VALIDATION_FAILED'),
+    });
+
+    renderLogin();
+    await signIn('admin@localhost', 'password');
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบและแก้ไขข้อมูลที่กรอก แล้วลองอีกครั้ง',
+    );
+  });
+
+  it('tells the user in Thai to retry when the request conflicts', async () => {
+    mockApi({
+      'GET /auth/me': { user: null },
+      'POST /auth/login': apiError('RETRY', 'CONFLICT'),
+    });
+
+    renderLogin();
+    await signIn('admin@erp.local', 'password');
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'ระบบไม่สามารถดำเนินการได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง',
+    );
   });
 
   it('fills in a demo account', async () => {
