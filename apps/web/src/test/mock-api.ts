@@ -19,7 +19,8 @@ export function mockApi(routes: Record<string, unknown>) {
 
 /** A rejection in the API's error envelope: 400 for `CORRECT_INPUT`, 409 for `RETRY`. */
 export function apiError(category: 'CORRECT_INPUT' | 'RETRY', code: string) {
-  const [status, httpCode] = category === 'CORRECT_INPUT' ? [400, 'BAD_REQUEST'] : [409, 'CONFLICT'];
+  const [status, httpCode] =
+    category === 'CORRECT_INPUT' ? [400, 'BAD_REQUEST'] : [409, 'CONFLICT'];
   return Response.json(
     { defined: false, code: httpCode, status, message: code, data: { category, code } },
     { status },
