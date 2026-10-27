@@ -103,6 +103,7 @@ This spec is the agreed release baseline. It implements the TOR's documented def
 Good tests assert external behaviour through the highest available seam, never implementation details. Everything runs on Vitest, colocated with the code. We reuse the three existing seams and add one integration harness; the ideal of few seams is preserved.
 
 **Seam 1 - oRPC controller specs (`apps/api`, `*.spec.ts`) - primary.** Build the controller with Nest's testing module, stub `PrismaService`, invoke handlers with `call()` from `@orpc/server` (which runs contract validation like a real request). Pass the `User` straight into the method to simulate role and store. This seam proves the business behaviour and the eight acceptance scenarios as ID-tagged tests:
+
 - AC-01 (GR-01..GR-03): receive 8 of SKU001 -> B01 stock 18, outstanding 12, Partially Received, exactly one receipt + one movement.
 - AC-02 (GR-04): receive 8, resend same request -> original receipt, stock stays 18, cumulative 8.
 - AC-03 (GR-02/GR-05): receive 21 -> rejected, no receipt/movement, stock stays 10, order stays Approved.
@@ -111,7 +112,7 @@ Good tests assert external behaviour through the highest available seam, never i
 - AC-08 (RPT-01/RPT-02): no sales -> zero totals; SKU003 (0 <= threshold 3) appears in B01 low-stock report.
 - PO state machine: every legal and illegal transition.
 - Idempotency, snapshotting, line/total arithmetic, CSV formula-injection (feed a `=cmd`-style product name through the exporter), near-midnight Asia/Bangkok boundary.
-Prior art: `apps/api/src/auth/auth.controller.spec.ts`, `apps/api/src/health/health.controller.spec.ts`.
+  Prior art: `apps/api/src/auth/auth.controller.spec.ts`, `apps/api/src/health/health.controller.spec.ts`.
 
 **Seam 2 - guard spec (`apps/api/src/auth/auth.guard.spec.ts`) - authorization.** Extend the existing guard spec with the store-scope check. AC-04 (staff_b02 direct API call to receive for B01 is rejected, no data change) and every negative-authorization test live here. Prior art: the existing `@Public`/`@Roles` cases in the same file.
 

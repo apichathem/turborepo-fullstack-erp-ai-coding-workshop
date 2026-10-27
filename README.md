@@ -54,10 +54,13 @@ The first start takes a few minutes. When the logs settle:
 
 Sign in with one of the demo accounts (they are also listed on the login page):
 
-| Email             | Password   | Role    |
-| ----------------- | ---------- | ------- |
-| `admin@erp.local` | `password` | `ADMIN` |
-| `staff@erp.local` | `password` | `STAFF` |
+| Email                 | Password   | Role                 | Store |
+| --------------------- | ---------- | -------------------- | ----- |
+| `admin@erp.local`     | `password` | `ADMINISTRATOR`      | —     |
+| `manager01@erp.local` | `password` | `MANAGER`            | —     |
+| `buyer01@erp.local`   | `password` | `PURCHASING_OFFICER` | B01   |
+| `staff_b01@erp.local` | `password` | `STORE_EMPLOYEE`     | B01   |
+| `staff_b02@erp.local` | `password` | `STORE_EMPLOYEE`     | B02   |
 
 The home page then shows a **System status** card. **API ✅ / Database ✅** means the full chain works: React → typed client → Vite proxy → NestJS → Prisma → Postgres.
 
