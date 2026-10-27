@@ -21,14 +21,19 @@ export const isStoreBoundRole = (role: Role): boolean =>
   (STORE_BOUND_ROLES as readonly Role[]).includes(role);
 
 /** The signed-in user as the API exposes it (never includes the password hash). */
-export const UserSchema = z.object({
-  id: z.string(),
-  email: z.email(),
-  name: z.string(),
-  role: RoleSchema,
-  /** The store a store-bound user belongs to. `null` for org-wide roles (Administrator, Manager). */
-  storeId: z.string().nullable(),
-});
+export const UserSchema = z
+  .object({
+    id: z.string(),
+    email: z.email(),
+    name: z.string(),
+    role: RoleSchema,
+    /** The store a store-bound user belongs to. `null` for org-wide roles (Administrator, Manager). */
+    storeId: z.string().nullable(),
+  })
+  .refine((user) => isStoreBoundRole(user.role) === (user.storeId !== null), {
+    error: 'Store-bound roles must have a storeId; org-wide roles must not.',
+    path: ['storeId'],
+  });
 export type User = z.infer<typeof UserSchema>;
 
 export const LoginInputSchema = z.object({

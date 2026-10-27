@@ -62,6 +62,30 @@ describe('UserSchema', () => {
 
     expect(result.success).toBe(true);
   });
+
+  it('rejects a store-bound user with no storeId', () => {
+    const result = UserSchema.safeParse({
+      id: 'u3',
+      email: 'staff_b01@erp.local',
+      name: 'Store B01',
+      role: 'STORE_EMPLOYEE',
+      storeId: null,
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects an org-wide user that carries a storeId', () => {
+    const result = UserSchema.safeParse({
+      id: 'u4',
+      email: 'admin@erp.local',
+      name: 'Admin',
+      role: 'ADMINISTRATOR',
+      storeId: 'store-b01',
+    });
+
+    expect(result.success).toBe(false);
+  });
 });
 
 describe('LoginInputSchema', () => {
