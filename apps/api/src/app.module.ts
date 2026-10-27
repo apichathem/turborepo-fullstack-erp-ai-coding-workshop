@@ -4,6 +4,7 @@ import { ORPCModule } from '@orpc/nest';
 import { AuthModule } from './auth/auth.module.js';
 import { validateEnv } from './config/env.js';
 import { DatabaseModule } from './database/database.module.js';
+import { apiErrorInterceptor } from './errors/api-error.js';
 import { HealthModule } from './health/health.module.js';
 import { OpenApiModule } from './openapi/openapi.module.js';
 
@@ -15,7 +16,7 @@ import { OpenApiModule } from './openapi/openapi.module.js';
       envFilePath: ['../../.env'],
       validate: validateEnv,
     }),
-    ORPCModule.forRoot({}),
+    ORPCModule.forRoot({ interceptors: [apiErrorInterceptor] }),
     DatabaseModule,
     AuthModule,
     HealthModule,
